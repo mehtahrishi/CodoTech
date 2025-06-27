@@ -1,1 +1,119 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GlassBot – Your Calm Companion</title>
+  <!-- Favicon in browser tab -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.ico') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body class="light">
+
+  <!-- Chat Container -->
+  <div class="chat-wrapper">
+    <div class="chat-container">
+      <div class="chat-header">
+        <h2>
+          <img src="{{ url_for('static', filename='image.png') }}" alt="Bot" class="header-icon">
+          GlassBot – For Quiet Minds
+        </h2>
+        <button id="toggle-theme">🌙</button>
+      </div>
+
+      <div id="chat-box"></div>
+
+      <div class="input-area">
+        <input type="text" id="user-input" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Social Tray -->
+  <div id="social-tray">
+    <button id="tray-toggle">🌐</button>
+    <div class="tray-content">
+      <a href="https://github.com/mehtahrishi" target="_blank">🐙</a>
+      <a href="https://www.linkedin.com/in/hrishi-mehta-889732256/" target="_blank">💼</a>
+      <a href="mailto:mehtahrishi45@gmail.com">✉️</a>
+      <a href="https://portfolio-theta-lemon-33.vercel.app/" target="_blank">👨‍💻</a>
+    </div>
+  </div>
+
+  <script>
+    function appendMessage(sender, text) {
+      const chatBox = document.getElementById("chat-box");
+      const msgDiv = document.createElement("div");
+      msgDiv.className = `msg ${sender}`;
+
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.innerText = sender === "user" ? "🧑" : "🤖";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+
+      if (sender === "user") {
+        msgDiv.appendChild(bubble);
+        msgDiv.appendChild(avatar);
+      } else {
+        msgDiv.appendChild(avatar);
+        msgDiv.appendChild(bubble);
+      }
+
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("user-input");
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      appendMessage("user", msg);
+      input.value = "";
+      appendMessage("bot", "Typing...");
+
+      fetch("/get", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ msg })
+      })
+      .then(res => res.json())
+      .then(data => {
+        const lastMsg = document.querySelector(".bot:last-child .bubble");
+        typeText(lastMsg, data.response);
+      });
+    }
+
+    function typeText(element, text, i = 0) {
+      element.textContent = "";
+      const interval = setInterval(() => {
+        element.textContent += text[i];
+        i++;
+        if (i >= text.length) clearInterval(interval);
+      }, 30);
+    }
+
+    document.getElementById("toggle-theme").onclick = () => {
+      const body = document.body;
+      body.classList.toggle("dark");
+      body.classList.toggle("light");
+
+      const mode = body.classList.contains("dark") ? "dark" : "light";
+      body.style.backgroundImage = mode === "dark"
+        ? "url('https://static.vecteezy.com/system/resources/previews/014/848/047/non_2x/aesthetic-gradient-black-background-design-suitable-for-poster-design-invitations-greeting-cards-and-others-vector.jpg')"
+        : "url('https://www.shutterstock.com/shutterstock/videos/3753348157/thumb/1.jpg?ip=x480')";
+
+      document.getElementById("toggle-theme").textContent = mode === "dark" ? "☀️" : "🌙";
+    };
+
+    document.getElementById("tray-toggle").addEventListener("click", function () {
+      const tray = document.getElementById("social-tray");
+      tray.classList.toggle("open");
+    });
+  </script>
+</body>
+</html>
