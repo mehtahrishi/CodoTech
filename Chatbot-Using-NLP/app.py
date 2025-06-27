@@ -1,19 +1,13 @@
 from flask import Flask, render_template, request, jsonify
 import requests
-from dotenv import load_dotenv
-import os
-
-# Load .env variables
-load_dotenv()
-
-API_KEY = os.getenv("OPENROUTER_API_KEY")
-API_URL = os.getenv("OPENROUTER_API_URL")
-
-if not API_KEY or not API_URL:
-    raise ValueError("❌ API_KEY or API_URL is missing from .env")
 
 app = Flask(__name__)
 
+# ✅ Hardcoded OpenRouter credentials (public)
+API_KEY = "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"
+API_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+# GlassBot system prompt
 SYSTEM_PROMPT = {
     "role": "system",
     "content": (
