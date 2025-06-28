@@ -1,7 +1,0 @@
-Flask
-gunicorn
-python-dotenv
-pymongo
-pandas
-requests
-numpy==1.26.4
