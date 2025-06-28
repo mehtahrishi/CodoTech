@@ -125,6 +125,3 @@ This project is licensed under the MIT License. Feel free to use, modify, and di
 ## 🤝 Credits
 
 Created with ❤️ by Hrishi Mehta. Inspired by modern UI/UX design trends.
-
-```
-```
