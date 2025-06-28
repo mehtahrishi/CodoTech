@@ -1,1 +1,156 @@
+{% extends "base.html" %}
 
+{% block title %}Home - Random Password Generator{% endblock %}
+
+{% block content %}
+<div class="glass-card main-card">
+    <h1>Your Secure Password</h1>
+    <p class="subtitle">Customize your password options below.</p>
+    
+    <div class="length-selector">
+        <label for="length-slider">Password Length: <span id="length-value">16</span></label>
+        <input type="range" id="length-slider" min="8" max="64" value="16">
+    </div>
+
+    <!-- NEW: Character Type Options -->
+    <div class="char-options">
+        <div class="option-item">
+            <input type="checkbox" id="include-uppercase" checked>
+            <label for="include-uppercase">Uppercase (A-Z)</label>
+        </div>
+        <div class="option-item">
+            <input type="checkbox" id="include-lowercase" checked>
+            <label for="include-lowercase">Lowercase (a-z)</label>
+        </div>
+        <div class="option-item">
+            <input type="checkbox" id="include-numbers" checked>
+            <label for="include-numbers">Numbers (0-9)</label>
+        </div>
+        <div class="option-item">
+            <input type="checkbox" id="include-symbols" checked>
+            <label for="include-symbols">Symbols (!@#$)</label>
+        </div>
+    </div>
+
+    <div class="password-display-wrapper">
+        <code id="password-display">{{ initial_password }}</code>
+    </div>
+
+    <button id="copy-btn" class="copy-button">
+        <span class="icon">📋</span>
+        <span class="text">Copy</span>
+    </button>
+    
+    <div class="auto-refresh-notice">
+        <p>✨ Auto-refreshes every 10 seconds</p>
+        <div id="timer-dots" class="timer-dots"></div>
+    </div>
+</div>
+
+<!-- "How It Works" section remains unchanged -->
+<div class="how-it-works-container">
+    <div class="glass-card step-card">
+        <h3>Step 1</h3>
+        <h4>Secure Generation</h4>
+        <p>Passwords are created on our server using Python's cryptographically secure `secrets` module, ensuring true randomness.</p>
+    </div>
+    <div class="glass-card step-card">
+        <h3>Step 2</h3>
+        <h4>Live Refresh</h4>
+        <p>The page automatically fetches a new password every 10 seconds without reloading, keeping your session fresh and secure.</p>
+    </div>
+    <div class="glass-card step-card">
+        <h3>Step 3</h3>
+        <h4>You're in Control</h4>
+        <p>Use the slider and checkboxes to instantly adjust the password to meet any security requirement.</p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // ... (existing element references)
+        const lengthSlider = document.getElementById('length-slider');
+        const lengthValue = document.getElementById('length-value');
+        const passwordDisplay = document.getElementById('password-display');
+        const copyBtn = document.getElementById('copy-btn');
+        // ... (new checkbox references)
+        const chkUpper = document.getElementById('include-uppercase');
+        const chkLower = document.getElementById('include-lowercase');
+        const chkNumbers = document.getElementById('include-numbers');
+        const chkSymbols = document.getElementById('include-symbols');
+        const allCheckboxes = [chkUpper, chkLower, chkNumbers, chkSymbols];
+        // ... (timer dot references)
+        const timerDotsContainer = document.getElementById('timer-dots');
+        let dotTimer, mainTimer, timerCounter = 0;
+
+        for (let i = 0; i < 10; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('timer-dot');
+            timerDotsContainer.appendChild(dot);
+        }
+        const allDots = document.querySelectorAll('.timer-dot');
+
+        // --- Fetch New Password Function (Updated) ---
+        const fetchNewPassword = async () => {
+            const length = lengthSlider.value;
+            // Build query string with all options
+            const params = new URLSearchParams({
+                length: length,
+                uppercase: chkUpper.checked,
+                lowercase: chkLower.checked,
+                numbers: chkNumbers.checked,
+                symbols: chkSymbols.checked
+            });
+            
+            try {
+                passwordDisplay.style.opacity = '0';
+                setTimeout(async () => {
+                    const response = await fetch(`/password?${params.toString()}`);
+                    const data = await response.json();
+                    passwordDisplay.textContent = data.password;
+                    passwordDisplay.style.opacity = '1';
+                }, 300);
+            } catch (error) {
+                console.error('Error fetching new password:', error);
+                passwordDisplay.textContent = 'Error!';
+                passwordDisplay.style.opacity = '1';
+            }
+        };
+
+        // --- Timer logic (remains the same) ---
+        const resetAndStartTimers = () => {
+            clearInterval(dotTimer);
+            clearInterval(mainTimer);
+            fetchNewPassword();
+            timerCounter = 0;
+            allDots.forEach(dot => dot.classList.remove('active'));
+            allDots[0].classList.add('active');
+            dotTimer = setInterval(() => {
+                timerCounter++;
+                if (timerCounter < 10) allDots[timerCounter].classList.add('active');
+            }, 1000);
+            mainTimer = setInterval(resetAndStartTimers, 10000);
+        };
+
+        // --- Event Listeners ---
+        copyBtn.addEventListener('click', () => { /* ... copy logic is unchanged ... */ });
+        lengthSlider.addEventListener('input', (event) => { lengthValue.textContent = event.target.value; });
+        lengthSlider.addEventListener('change', resetAndStartTimers);
+
+        // --- NEW: Checkbox Logic ---
+        allCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                // Ensure at least one checkbox is always checked
+                const checkedCount = allCheckboxes.filter(cb => cb.checked).length;
+                if (checkedCount === 0) {
+                    checkbox.checked = true; // Prevent unchecking the last one
+                }
+                resetAndStartTimers(); // Generate a new password on change
+            });
+        });
+
+        // --- Initial Start ---
+        resetAndStartTimers();
+    });
+</script>
+{% endblock %}

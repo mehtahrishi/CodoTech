@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Strong Passwords - Password Generator{% endblock %}
+
+{% block content %}
+<div class="glass-card info-card">
+    <h2>What Makes a Password Strong?</h2>
+    <p>
+        Creating a strong password is one of the most critical steps you can take to secure your online life. Here are the key ingredients:
+    </p>
+    
+    <ul>
+        <li>
+            <strong>Length:</strong> Longer is always better. Aim for at least <strong>12-16 characters</strong>. Each additional character exponentially increases the password's complexity.
+        </li>
+        <li>
+            <strong>Complexity:</strong> Use a mix of all character types:
+            <ul>
+                <li>Uppercase letters (A-Z)</li>
+                <li>Lowercase letters (a-z)</li>
+                <li>Numbers (0-9)</li>
+                <li>Symbols (!@#$%^&*)</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Unpredictability:</strong> Avoid using common words, phrases, or personal information like your name, birthday, or pet's name. "Password123" is not your friend!
+        </li>
+        <li>
+            <strong>Uniqueness:</strong> Use a different, unique password for every single one of your accounts. If one site is breached, your other accounts remain safe.
+        </li>
+    </ul>
+
+    <p>
+        This app generates passwords that meet all these criteria, giving you a strong foundation for your security.
+    </p>
+</div>
+{% endblock %}

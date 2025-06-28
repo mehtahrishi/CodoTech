@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ - Password Generator{% endblock %}
+
+{% block content %}
+<div class="glass-card info-card">
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+        <h4>Q: Is the password generation truly random?</h4>
+        <p>A: Yes. This app uses Python's `secrets` module, which is designed for generating cryptographically strong random numbers suitable for managing secrets like passwords and security tokens.</p>
+    </div>
+
+    <div class="faq-item">
+        <h4>Q: Can I use this in a production environment?</h4>
+        <p>A: This is primarily a demonstration project. For production, you should run it behind a proper web server (like Gunicorn or Nginx), enable HTTPS to encrypt traffic, and consider adding more features like a "copy to clipboard" button.</p>
+    </div>
+
+    <div class="faq-item">
+        <h4>Q: Can I deploy this for free?</h4>
+        <p>A: Absolutely! Services like Replit, Render, and PythonAnywhere offer free tiers that are perfect for hosting small Flask applications like this one.</p>
+    </div>
+    
+    <div class="faq-item">
+        <h4>Q: Why does the password change automatically?</h4>
+        <p>A: This feature is designed to showcase how a frontend (JavaScript) can interact with a backend API (Flask) to dynamically update content without reloading the page. It's a "live" demonstration of its capability.</p>
+    </div>
+</div>
+{% endblock %}
