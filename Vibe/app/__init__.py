@@ -1,16 +1,14 @@
 from flask import Flask
-import os
 
 def create_app():
-    """Create a minimal Flask application."""
+    """Create the Flask application with custom template/static paths."""
     app = Flask(
         __name__,
-        template_folder=os.path.join(os.path.dirname(__file__), "templates"),
-        static_folder=os.path.join(os.path.dirname(__file__), "static")
+        template_folder="app/templates",   # 🔥 Tell Flask where to find index.html
+        static_folder="app/static"         # (if you're using CSS/JS/images)
     )
 
-    with app.app_context():
-        from . import routes
-        app.register_blueprint(routes.main_bp)
+    from . import routes
+    app.register_blueprint(routes.main_bp)
 
     return app
