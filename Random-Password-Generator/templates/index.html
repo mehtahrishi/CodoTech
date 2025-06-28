@@ -12,7 +12,7 @@
         <input type="range" id="length-slider" min="8" max="64" value="16">
     </div>
 
-    <!-- NEW: Character Type Options -->
+    <!-- Character Type Options -->
     <div class="char-options">
         <div class="option-item">
             <input type="checkbox" id="include-uppercase" checked>
@@ -47,7 +47,7 @@
     </div>
 </div>
 
-<!-- "How It Works" section remains unchanged -->
+<!-- How It Works Section -->
 <div class="how-it-works-container">
     <div class="glass-card step-card">
         <h3>Step 1</h3>
@@ -68,21 +68,19 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // ... (existing element references)
         const lengthSlider = document.getElementById('length-slider');
         const lengthValue = document.getElementById('length-value');
         const passwordDisplay = document.getElementById('password-display');
         const copyBtn = document.getElementById('copy-btn');
-        // ... (new checkbox references)
         const chkUpper = document.getElementById('include-uppercase');
         const chkLower = document.getElementById('include-lowercase');
         const chkNumbers = document.getElementById('include-numbers');
         const chkSymbols = document.getElementById('include-symbols');
         const allCheckboxes = [chkUpper, chkLower, chkNumbers, chkSymbols];
-        // ... (timer dot references)
         const timerDotsContainer = document.getElementById('timer-dots');
         let dotTimer, mainTimer, timerCounter = 0;
 
+        // Create dots
         for (let i = 0; i < 10; i++) {
             const dot = document.createElement('div');
             dot.classList.add('timer-dot');
@@ -90,10 +88,9 @@
         }
         const allDots = document.querySelectorAll('.timer-dot');
 
-        // --- Fetch New Password Function (Updated) ---
+        // Fetch new password
         const fetchNewPassword = async () => {
             const length = lengthSlider.value;
-            // Build query string with all options
             const params = new URLSearchParams({
                 length: length,
                 uppercase: chkUpper.checked,
@@ -117,7 +114,7 @@
             }
         };
 
-        // --- Timer logic (remains the same) ---
+        // Reset timers
         const resetAndStartTimers = () => {
             clearInterval(dotTimer);
             clearInterval(mainTimer);
@@ -127,29 +124,45 @@
             allDots[0].classList.add('active');
             dotTimer = setInterval(() => {
                 timerCounter++;
-                if (timerCounter < 10) allDots[timerCounter].classList.add('active');
+                if (timerCounter < 10) {
+                    allDots[timerCounter].classList.add('active');
+                }
             }, 1000);
             mainTimer = setInterval(resetAndStartTimers, 10000);
         };
 
-        // --- Event Listeners ---
-        copyBtn.addEventListener('click', () => { /* ... copy logic is unchanged ... */ });
-        lengthSlider.addEventListener('input', (event) => { lengthValue.textContent = event.target.value; });
-        lengthSlider.addEventListener('change', resetAndStartTimers);
-
-        // --- NEW: Checkbox Logic ---
-        allCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', () => {
-                // Ensure at least one checkbox is always checked
-                const checkedCount = allCheckboxes.filter(cb => cb.checked).length;
-                if (checkedCount === 0) {
-                    checkbox.checked = true; // Prevent unchecking the last one
-                }
-                resetAndStartTimers(); // Generate a new password on change
+        // Copy password logic
+        copyBtn.addEventListener('click', () => {
+            const password = passwordDisplay.textContent;
+            navigator.clipboard.writeText(password).then(() => {
+                copyBtn.querySelector('.text').textContent = 'Copied!';
+                setTimeout(() => {
+                    copyBtn.querySelector('.text').textContent = 'Copy';
+                }, 1500);
+            }).catch(err => {
+                console.error('Failed to copy password:', err);
             });
         });
 
-        // --- Initial Start ---
+        // Slider
+        lengthSlider.addEventListener('input', (event) => {
+            lengthValue.textContent = event.target.value;
+        });
+
+        lengthSlider.addEventListener('change', resetAndStartTimers);
+
+        // Checkbox logic
+        allCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const checkedCount = allCheckboxes.filter(cb => cb.checked).length;
+                if (checkedCount === 0) {
+                    checkbox.checked = true; // Prevent unchecking all
+                }
+                resetAndStartTimers();
+            });
+        });
+
+        // Initial fetch
         resetAndStartTimers();
     });
 </script>
